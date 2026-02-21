@@ -29,10 +29,19 @@ owner={{OWNER_NAME}}
 clone-prefix={{CLONE_PREFIX}}
 
 # ---------------------------------------------------------------------------
-# Repository scanning
+# Rendering
 # ---------------------------------------------------------------------------
-scan-path={{REPOS_DIR}}
+# Syntax highlighting — custom filter (CSS classes only, no inline styles)
+# Works with our theme's .highlight CSS rules in both light and dark mode
+source-filter=/etc/cgit/syntax-highlight.py
+# Convert markdown readmes
+about-filter=/usr/lib/cgit/filters/about-formatting.sh
+# Gravatar / libravatar
+email-filter=lua:/usr/lib/cgit/filters/email-libravatar.lua
 
+# ---------------------------------------------------------------------------
+# Feature toggles
+# ---------------------------------------------------------------------------
 # Read per-repo cgit.* config keys (desc, owner, section, etc.)
 # Also removes the requirement for git-daemon-export-ok in each repo
 enable-git-config=1
@@ -45,17 +54,6 @@ enable-blame=1
 enable-commit-graph=1
 max-repo-count=50
 max-repodesc-length=80
-
-# ---------------------------------------------------------------------------
-# Rendering
-# ---------------------------------------------------------------------------
-# Syntax highlighting — custom filter (CSS classes only, no inline styles)
-# Works with our theme's .highlight CSS rules in both light and dark mode
-source-filter=/etc/cgit/syntax-highlight.py
-# Convert markdown readmes
-about-filter=/usr/lib/cgit/filters/about-formatting.sh
-# Gravatar / libravatar
-email-filter=lua:/usr/lib/cgit/filters/email-libravatar.lua
 
 # Limit resource usage on constrained boxes
 max-stats=quarter
@@ -81,6 +79,14 @@ cache-root-ttl=300
 # ---------------------------------------------------------------------------
 snapshots=tar.gz zip
 noplainemail=1
+
+# ---------------------------------------------------------------------------
+# Repository scanning
+# IMPORTANT: scan-path MUST be the last directive. When cgit parses it, it
+# immediately registers repos — any global settings (source-filter, etc.)
+# defined AFTER scan-path will NOT apply to the discovered repos.
+# ---------------------------------------------------------------------------
+scan-path={{REPOS_DIR}}
 
 # ---------------------------------------------------------------------------
 # Per-repo overrides go in each repo's config

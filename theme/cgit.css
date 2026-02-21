@@ -459,6 +459,18 @@ table.list tr.nohover:hover td {
     background: var(--bg-secondary);
 }
 
+/* Empty separator rows between summary sections (branches/tags/commits/clone).
+   cgit emits <tr class="nohover"><td colspan="N">&nbsp;</td></tr> between each
+   section.  Collapse them to a thin transparent gap instead of a full-height
+   styled block.  The :not(:has(a)) excludes the "[...]" pagination row. */
+table.list tr.nohover td[colspan]:not(:has(a)) {
+    padding: 0;
+    height: 12px;
+    font-size: 0;
+    line-height: 0;
+    background: transparent;
+}
+
 
 /* ===================================================================
    Repository summary / details
