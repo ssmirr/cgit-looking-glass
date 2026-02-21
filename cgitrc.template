@@ -49,8 +49,9 @@ max-repodesc-length=80
 # ---------------------------------------------------------------------------
 # Rendering
 # ---------------------------------------------------------------------------
-# Syntax highlighting via python3-pygments
-source-filter=/usr/lib/cgit/filters/syntax-highlighting.py
+# Syntax highlighting — custom filter (CSS classes only, no inline styles)
+# Works with our theme's .highlight CSS rules in both light and dark mode
+source-filter=/etc/cgit/syntax-highlight.py
 # Convert markdown readmes
 about-filter=/usr/lib/cgit/filters/about-formatting.sh
 # Gravatar / libravatar

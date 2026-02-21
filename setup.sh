@@ -448,6 +448,8 @@ install_cgit_config() {
     mkdir -p /etc/cgit
     cp "${SCRIPT_DIR}/theme/header.html" /etc/cgit/header.html
     cp "${SCRIPT_DIR}/theme/footer.html" /etc/cgit/footer.html
+    cp "${SCRIPT_DIR}/theme/syntax-highlight.py" /etc/cgit/syntax-highlight.py
+    chmod +x /etc/cgit/syntax-highlight.py
 
     local ram_mb
     ram_mb="$(get_total_ram_mb)"

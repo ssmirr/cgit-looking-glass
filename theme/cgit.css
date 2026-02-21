@@ -229,7 +229,7 @@ table#header {
 
 table#header td {
     border: none;
-    padding: 16px 0;
+    padding: 16px 0 8px;
     vertical-align: middle;
 }
 
@@ -248,8 +248,8 @@ table#header td.main a:hover {
 
 table#header td.sub {
     text-align: right;
-    color: var(--text-secondary);
-    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+    font-size: var(--font-size-xs);
 }
 
 table#header td.logo,
@@ -262,6 +262,13 @@ table#header + table.tabs,
 div.path {
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
+}
+
+/* "blob: sha1" hash display — compact, muted */
+div.content > table.blob,
+div.content > table.list,
+div.content > table.diff {
+    margin-top: 8px;
 }
 
 
@@ -381,16 +388,16 @@ table.list {
 table.list th {
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     font-weight: 600;
     text-align: left;
-    padding: 10px 16px;
+    padding: 8px 16px;
     border-bottom: 1px solid var(--border-primary);
     white-space: nowrap;
 }
 
 table.list td {
-    padding: 10px 16px;
+    padding: 8px 16px;
     border-bottom: 1px solid var(--border-muted);
     font-size: var(--font-size-sm);
     vertical-align: middle;
@@ -459,6 +466,16 @@ table.list tr.nohover:hover td {
 
 div.content {
     min-height: 200px;
+}
+
+/* "path: root/cli/Dockerfile" breadcrumb styling */
+div.content > :first-child {
+    font-size: var(--font-size-sm);
+}
+
+/* SHA1 hash line styling */
+div.content > table.blob {
+    margin-top: 8px;
 }
 
 table.head {
@@ -668,7 +685,7 @@ table.blob td {
 
 table.blob td.linenumbers {
     width: 1%;
-    min-width: 50px;
+    min-width: 44px;
     padding: 8px 0;
     text-align: right;
     background: var(--bg-secondary);
@@ -679,7 +696,8 @@ table.blob td.linenumbers {
 
 table.blob td.linenumbers a {
     display: block;
-    padding: 0 12px;
+    padding: 0 10px 0 16px;
+    line-height: 20px;
     color: var(--text-tertiary);
     font-size: var(--font-size-xs);
     text-decoration: none;
@@ -689,7 +707,9 @@ table.blob td.linenumbers a:hover {
 }
 
 table.blob td.lines {
-    padding: 8px 16px;
+    padding: 8px 0 8px 16px;
+    width: 100%;
+    overflow-x: auto;
 }
 
 table.blob pre {
@@ -705,6 +725,20 @@ pre.blob {
     line-height: 20px;
     tab-size: 4;
     color: var(--code-text);
+}
+
+/* Pygments wraps in <div class="highlight"><pre>...</pre></div>
+   Strip any extra margin/padding to keep lines aligned with line numbers */
+table.blob td.lines .highlight {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+}
+table.blob td.lines .highlight pre {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    line-height: 20px;
 }
 
 div.blob-binary {
