@@ -1,0 +1,29 @@
+services:
+  cgit:
+    build:
+      context: ./dev
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      # Theme files — edit and refresh browser, no rebuild needed
+      - ./theme/cgit.css:/usr/share/cgit/cgit.css:ro
+      - ./theme/cgit.js:/usr/share/cgit/cgit.js:ro
+      - ./theme/header.html:/etc/cgit/header.html:ro
+      - ./theme/footer.html:/etc/cgit/footer.html:ro
+      - ./theme/favicon.svg:/usr/share/cgit/favicon.svg:ro
+
+      # Syntax highlighting filter
+      - ./theme/syntax-highlight.py:/etc/cgit/syntax-highlight.py:ro
+
+      # Config templates (entrypoint generates final configs from these)
+      - ./cgitrc.template:/etc/cgit/cgitrc.template:ro
+      - ./lighttpd/cgit.conf:/etc/cgit/cgit.conf:ro
+
+      # Persist seeded repos across restarts
+      - cgit-repos:/srv/git
+      - cgit-cache:/var/cache/cgit
+
+volumes:
+  cgit-repos:
+  cgit-cache:
