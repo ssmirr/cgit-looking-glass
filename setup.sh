@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ==========================================================================
 
 # Detect terminal capabilities
-if [[ -t 1 ]] && command -v tput &>/dev/null; then
+if [[ -t 0 || -e /dev/tty ]] && command -v tput &>/dev/null; then
     TERM_COLS="$(tput cols 2>/dev/null || echo 80)"
     TERM_BOLD="$(tput bold 2>/dev/null || true)"
     TERM_DIM="$(tput dim 2>/dev/null || true)"
@@ -108,7 +108,7 @@ tui_input() {
     else
         printf "  ${C_CYAN}${BOX_BULLET}${C_RESET} ${TERM_BOLD}%s${C_RESET}: " "$label" >&2
     fi
-    read -r value
+    read -r value </dev/tty
     echo "${value:-$default}"
 }
 
@@ -117,7 +117,7 @@ tui_input() {
 tui_secret() {
     local label="$1" value
     printf "  ${C_CYAN}${BOX_BULLET}${C_RESET} ${TERM_BOLD}%s${C_RESET}: " "$label" >&2
-    read -rs value
+    read -rs value </dev/tty
     echo >&2  # newline after hidden input
     echo "$value"
 }
@@ -130,7 +130,7 @@ tui_confirm() {
     [[ "$default" == "n" ]] && hint="y/N"
     printf "\n  ${C_CYAN}?${C_RESET} ${TERM_BOLD}%s${C_RESET} ${C_GRAY}[%s]${C_RESET} " "$label" "$hint" >&2
     local answer
-    read -r answer
+    read -r answer </dev/tty
     answer="${answer:-$default}"
     [[ "${answer,,}" == "y" || "${answer,,}" == "yes" ]]
 }
