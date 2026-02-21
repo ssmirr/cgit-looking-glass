@@ -58,7 +58,15 @@ bots:
     action: DENY
 
   # ------------------------------------------------------------------
-  # 5. Challenge suspicious paths (git object access = likely scraper)
+  # 5. Allow git clients — they can't solve PoW challenges
+  # Matches: git/2.x, JGit, libgit2, go-git, etc.
+  # ------------------------------------------------------------------
+  - name: git-clients
+    user_agent_regex: '^git/|JGit|libgit2|go-git'
+    action: ALLOW
+
+  # ------------------------------------------------------------------
+  # 6. Challenge suspicious paths (git protocol via non-git user agent = scraper)
   # ------------------------------------------------------------------
   - name: git-object-access
     path_regex: '/objects/[0-9a-f]{2}/|/pack/|/info/refs|/HEAD$|/git-upload-pack'
@@ -68,7 +76,7 @@ bots:
       algorithm: fast
 
   # ------------------------------------------------------------------
-  # 6. Challenge everyone else (legitimate browsers pass quickly)
+  # 7. Challenge everyone else (legitimate browsers pass quickly)
   # ------------------------------------------------------------------
   - name: default-challenge
     user_agent_regex: '.*'
