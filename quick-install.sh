@@ -18,8 +18,12 @@ fi
 
 if [[ -d "$INSTALL_DIR/.git" ]]; then
     git config --global --add safe.directory "$INSTALL_DIR" 2>/dev/null || true
-    git -C "$INSTALL_DIR" fetch origin
-    git -C "$INSTALL_DIR" reset --hard origin/master
+    # If update fails (e.g. force-pushed history), nuke and re-clone
+    if ! git -C "$INSTALL_DIR" fetch origin 2>/dev/null || \
+       ! git -C "$INSTALL_DIR" reset --hard origin/master 2>/dev/null; then
+        rm -rf "$INSTALL_DIR"
+        git clone "$REPO" "$INSTALL_DIR"
+    fi
 else
     rm -rf "$INSTALL_DIR"
     git clone "$REPO" "$INSTALL_DIR"
