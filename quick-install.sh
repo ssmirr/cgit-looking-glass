@@ -24,4 +24,4 @@ else
     git clone "$REPO" "$INSTALL_DIR"
 fi
 
-exec "$INSTALL_DIR/setup.sh" "$@"
+exec "$INSTALL_DIR/setup.sh" "$@" </dev/tty
