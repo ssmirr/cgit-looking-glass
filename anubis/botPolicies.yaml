@@ -1,0 +1,78 @@
+# Bot policies for cgit behind Anubis
+# Docs: https://anubis.techaro.lol/docs/admin/policies
+#
+# Rules are evaluated top-to-bottom; first match wins.
+# Actions: ALLOW, DENY, CHALLENGE, WEIGH
+
+bots:
+  # ------------------------------------------------------------------
+  # 1. Always allow — health checks, static assets, well-known paths
+  # ------------------------------------------------------------------
+  - name: health-and-static
+    path_regex: '^/(health|\.well-known|favicon\.svg|cgit\.(css|js))$'
+    action: ALLOW
+
+  # ------------------------------------------------------------------
+  # 2. Allow legitimate search engine crawlers
+  # These help your repos appear in search results
+  # ------------------------------------------------------------------
+  - name: googlebot
+    user_agent_regex: 'Googlebot|Google-InspectionTool'
+    action: ALLOW
+
+  - name: bingbot
+    user_agent_regex: 'bingbot|msnbot'
+    action: ALLOW
+
+  - name: duckduckbot
+    user_agent_regex: 'DuckDuckBot'
+    action: ALLOW
+
+  - name: internet-archive
+    user_agent_regex: 'archive\.org_bot|ia_archiver|Wayback'
+    action: ALLOW
+
+  # ------------------------------------------------------------------
+  # 3. Deny known AI scrapers — they ignore robots.txt
+  # ------------------------------------------------------------------
+  - name: ai-crawlers
+    user_agent_regex: 'CCBot|ChatGPT|GPTBot|Google-Extended|ClaudeBot|Claude-Web|Anthropic|Bytespider|PetalBot|Applebot-Extended|FacebookBot|Meta-ExternalAgent|PerplexityBot|YouBot|Diffbot|Kangaroo Bot|img2dataset|Scrapy'
+    action: DENY
+
+  - name: ai-training-generic
+    user_agent_regex: '(?i)(llm|gpt|training|scraper|crawler|spider|harvest|bot\b)'
+    action: CHALLENGE
+    challenge:
+      difficulty: {{DIFFICULTY_HIGH}}
+      algorithm: fast
+
+  # ------------------------------------------------------------------
+  # 4. Deny clearly malicious or useless bots
+  # ------------------------------------------------------------------
+  - name: vulnerability-scanners
+    user_agent_regex: 'Nikto|sqlmap|nmap|masscan|ZmEu|Morfeus|WPScan|Acunetix|Nessus'
+    action: DENY
+
+  - name: empty-ua
+    user_agent_regex: '^$'
+    action: DENY
+
+  # ------------------------------------------------------------------
+  # 5. Challenge suspicious paths (git object access = likely scraper)
+  # ------------------------------------------------------------------
+  - name: git-object-access
+    path_regex: '/objects/[0-9a-f]{2}/|/pack/|/info/refs|/HEAD$|/git-upload-pack'
+    action: CHALLENGE
+    challenge:
+      difficulty: {{DIFFICULTY_MED}}
+      algorithm: fast
+
+  # ------------------------------------------------------------------
+  # 6. Challenge everyone else (legitimate browsers pass quickly)
+  # ------------------------------------------------------------------
+  - name: default-challenge
+    user_agent_regex: '.*'
+    action: CHALLENGE
+    challenge:
+      difficulty: {{DIFFICULTY}}
+      algorithm: fast

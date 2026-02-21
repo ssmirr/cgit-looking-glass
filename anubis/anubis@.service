@@ -1,0 +1,45 @@
+# anubis@.service — systemd template for Anubis instances
+# Usage: systemctl enable --now anubis@cgit.service
+# Config: /etc/anubis/cgit.env
+
+[Unit]
+Description=Anubis PoW reverse proxy (%i)
+After=network-online.target
+Wants=network-online.target
+Documentation=https://anubis.techaro.lol/docs
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/anubis/%i.env
+ExecStart=/usr/bin/anubis
+
+# Security hardening — DynamicUser creates a transient sandboxed user
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+SystemCallFilter=@system-service
+SystemCallArchitectures=native
+
+# Memory limit — prevent runaway on tiny boxes
+MemoryMax=128M
+MemoryHigh=96M
+
+# Restart policy
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
