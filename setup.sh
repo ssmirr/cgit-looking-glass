@@ -433,6 +433,9 @@ setup_git_user() {
     mkdir -p "$REPOS_DIR"
     chown git:git "$REPOS_DIR"
     chmod 755 "$REPOS_DIR"
+
+    # www-data needs read access to repos for cgit + git-http-backend
+    usermod -aG git www-data 2>/dev/null || true
 }
 
 install_cgit_config() {
@@ -668,6 +671,12 @@ else
     chown -R git:git "$DEST"
 fi
 
+# Ensure repo is group-readable (www-data needs access for cgit + git-http-backend)
+chmod -R g+rX "$DEST"
+
+# Update server info for dumb-HTTP fallback
+git -C "$DEST" update-server-info 2>/dev/null || true
+
 # Mark repo as exportable (cgit scan-path requires this unless enable-git-config=1)
 touch "${DEST}/git-daemon-export-ok"
 chown git:git "${DEST}/git-daemon-export-ok"
@@ -691,6 +700,8 @@ for repo in "${REPOS_DIR}"/*.git; do
     [[ -d "$repo" ]] || continue
     echo "[$(date -Is)] Syncing $(basename "$repo")..."
     git -C "$repo" fetch --all --prune 2>&1 || echo "  WARN: fetch failed for $(basename "$repo")"
+    chmod -R g+rX "$repo"
+    git -C "$repo" update-server-info 2>/dev/null || true
 done
 SCRIPT
     chmod +x /usr/local/bin/cgit-sync-all
