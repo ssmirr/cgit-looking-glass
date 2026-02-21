@@ -445,6 +445,13 @@ install_cgit_config() {
     # lighttpd needs to find the CGI binary inside the document-root
     ln -sf /usr/lib/cgit/cgit.cgi "${cgit_static}/cgit.cgi"
 
+    # git-http-backend for smart HTTP cloning support
+    local git_http_backend
+    git_http_backend="$(find /usr/lib/git-core/ -name git-http-backend -type f 2>/dev/null | head -1)"
+    if [[ -n "$git_http_backend" ]]; then
+        ln -sf "$git_http_backend" "${cgit_static}/git-http-backend"
+    fi
+
     mkdir -p /etc/cgit
     cp "${SCRIPT_DIR}/theme/header.html" /etc/cgit/header.html
     cp "${SCRIPT_DIR}/theme/footer.html" /etc/cgit/footer.html
@@ -475,7 +482,8 @@ install_cgit_config() {
 }
 
 install_lighttpd() {
-    cp "${SCRIPT_DIR}/lighttpd/cgit.conf" /etc/lighttpd/conf-available/20-cgit.conf
+    sed -e "s|{{REPOS_DIR}}|${REPOS_DIR}|g" \
+        "${SCRIPT_DIR}/lighttpd/cgit.conf" > /etc/lighttpd/conf-available/20-cgit.conf
 
     lighttpd-enable-mod cgi       2>/dev/null || true
     lighttpd-enable-mod rewrite   2>/dev/null || true

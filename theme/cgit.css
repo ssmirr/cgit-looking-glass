@@ -1257,6 +1257,7 @@ html:not([data-theme]) .theme-toggle .icon-moon {
 
 .highlight .hll { background-color: var(--accent-bg); }
 .highlight .c   { color: var(--text-tertiary); font-style: italic; }   /* Comment */
+.highlight .ch  { color: var(--text-tertiary); font-style: italic; }   /* Comment.Hashbang */
 .highlight .k   { color: var(--accent-fg); font-weight: 600; }         /* Keyword */
 .highlight .o   { color: var(--text-secondary); }                       /* Operator */
 .highlight .cm  { color: var(--text-tertiary); font-style: italic; }   /* Comment.Multiline */
