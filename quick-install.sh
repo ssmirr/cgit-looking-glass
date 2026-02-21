@@ -17,6 +17,7 @@ if ! command -v git &>/dev/null; then
 fi
 
 if [[ -d "$INSTALL_DIR/.git" ]]; then
+    git config --global --add safe.directory "$INSTALL_DIR" 2>/dev/null || true
     git -C "$INSTALL_DIR" fetch origin
     git -C "$INSTALL_DIR" reset --hard origin/master
 else
